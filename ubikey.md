@@ -201,7 +201,7 @@ Card added: /usr/local/lib/libykcs11.so
 ```
 ssh-add -L
 ```
-
+ok
 ## III. Change default PIN Yubikey:
 Before giving the Yubikey to the user, the Admin must change the default PIN.
 1. Change OpenPGP PIN: 
