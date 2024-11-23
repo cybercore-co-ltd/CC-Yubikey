@@ -1,16 +1,18 @@
 ## I. Setup Environment for Yubikey:
-- Download and install the newest `yubico-piv-tools` https://developers.yubico.com/yubico-piv-tool/Releases/. At the time of writing, the newest version is `2.6.1`.
-- Install Yubikey Manager: https://www.yubico.com/support/download/yubikey-manager/
-- Plug the Yubikey into your computer.
 - Install lib
 ```
 sudo apt update
 sudo apt -y upgrade
 sudo apt -y install \
   wget gnupg2 gnupg-agent dirmngr \
-  cryptsetup scdaemon pcscd \
+  cryptsetup scdaemon pcscd libpcsclite-dev check gengetopt help2man \
   yubikey-personalization yubikey-manager yubico-piv-tool
 ```
+- Download and install the newest `yubico-piv-tools` https://developers.yubico.com/yubico-piv-tool/Releases/. At the time of writing, the newest version is `2.6.1`.
+  - Compile the library by following the steps: https://developers.yubico.com/yubico-piv-tool/ 
+  - Install Yubikey Manager: https://www.yubico.com/support/download/yubikey-manager/
+  - Plug the Yubikey into your computer.
+
 - A Yubikey has 3 types of PIN: 
   - OpenPGP PIN: used to unlock the OpenPGP application on the YubiKey. Its default user-pin is `123456` and its default admin-pin is `12345678`.
   - PIV PIN: used to unlock the PIV application on the YubiKey. Its default PIN is `123456` and its default PIN UnLock (PUK) is `12345678`.
