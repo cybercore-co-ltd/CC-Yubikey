@@ -7,7 +7,10 @@ sudo apt -y install \
   wget gnupg2 gnupg-agent dirmngr \
   cryptsetup scdaemon pcscd libpcsclite-dev check gengetopt help2man \
   yubikey-personalization yubikey-manager yubico-piv-tool
+ykman --version # Verify if the yubikey-manager is installed successfully
+
 ```
+
 - Download and install the newest `yubico-piv-tools` https://developers.yubico.com/yubico-piv-tool/Releases/. At the time of writing, the newest version is `2.6.1`.
   - Compile the library by following the steps: https://developers.yubico.com/yubico-piv-tool/ 
   - Install Yubikey Manager: https://www.yubico.com/support/download/yubikey-manager/
