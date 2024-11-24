@@ -21,7 +21,8 @@ ykman --version # Verify if the yubikey-manager is installed successfully
   sudo apt-add-repository ppa:yubico/stable
   sudo apt update
   sudo apt install yubikey-manager
-  ykman --version # verify ykman is installed successfully
+  # verify ykman is installed successfully
+  ❯ ykman --version
   # Expected Output: YubiKey Manager (ykman) version: 5.5.1
   ```
 - Install `Yubico-piv-tool`:
@@ -76,7 +77,10 @@ Enter command: `gpg --expert --full-gen-key` and follow the instruction to gener
     ![alt text](image-1.png)
     ![alt text](image-2.png)
 
-- if you lost the `key-ID`,  it is the last 16 digits of the `sec` output of `gpg --list-secret-keys`. 
+- if you lost the `key-ID` (but you must remember the passphrase to continue),  it is the last 16 digits of the `sec` output when command:
+  ```
+  gpg --list-secret-keys 
+  ```
 
 ### 2. Add Authenticate key:
 Add Authenticate key by following command:
