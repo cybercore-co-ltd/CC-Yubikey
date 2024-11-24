@@ -1,5 +1,5 @@
 ## I. Setup Environment for Yubikey:
-- Install lib
+<!-- - Install lib
 ```
 sudo apt update
 sudo apt -y upgrade
@@ -14,8 +14,28 @@ ykman --version # Verify if the yubikey-manager is installed successfully
 - Download and install the newest `yubico-piv-tools` https://developers.yubico.com/yubico-piv-tool/Releases/. At the time of writing, the newest version is `2.6.1`.
   - Compile the library by following the steps: https://developers.yubico.com/yubico-piv-tool/ 
   - Install Yubikey Manager: https://www.yubico.com/support/download/yubikey-manager/
-  - Plug the Yubikey into your computer.
+  - Plug the Yubikey into your computer. -->
 
+- Install `Yubikey-Manage`:
+  ```
+  sudo apt-add-repository ppa:yubico/stable
+  sudo apt update
+  sudo apt install yubikey-manager
+  ykman --version # verify ykman is installed successfully
+  # Expected Output: YubiKey Manager (ykman) version: 5.5.1
+  ```
+- Install `Yubico-piv-tool`:
+  ```
+  sudo apt update
+  sudo apt -y install \
+    cmake libtool libssl-dev pkg-config check libpcsclite-dev gengetopt help2man zlib1g-dev \
+    wget gnupg2 gnupg-agent dirmngr \
+    cryptsetup scdaemon pcscd  \
+    yubikey-personalization yubico-piv-tool
+  # Verfify Yubico-piv-tool is installed successfully
+  ❯ yubico-piv-tool --version
+  yubico-piv-tool 2.6.1
+  ```
 - A Yubikey has 3 types of PIN: 
   - OpenPGP PIN: used to unlock the OpenPGP application on the YubiKey. Its default user-pin is `123456` and its default admin-pin is `12345678`.
   - PIV PIN: used to unlock the PIV application on the YubiKey. Its default PIN is `123456` and its default PIN UnLock (PUK) is `12345678`.
@@ -28,8 +48,8 @@ ykman --version # Verify if the yubikey-manager is installed successfully
   ```
   - If you can't remember the PIN, you can reset the Yubikey by:
   ```
-  ykman piv reset # reset PIV will delete all PIV data
   ykman openpgp reset # reset OpenPGP will delete all OpenPGP data
+  ykman piv reset # reset PIV will delete all PIV data
   ```
   For example:
   ```
@@ -44,9 +64,9 @@ ykman --version # Verify if the yubikey-manager is installed successfully
   ```
 
 ## II. Setup PGP key on Yubikey:
-### 1. Create Key:
-- Follow this tutorial: https://support.yubico.com/hc/en-us/articles/360013790259-Using-Your-YubiKey-with-OpenPGP to install required library and the following steps:
+In this section, we follow the tutorial: https://support.yubico.com/hc/en-us/articles/360013790259-Using-Your-YubiKey-with-OpenPGP to install required library and the following steps:
 
+### 1. Create Key:
 Enter command: `gpg --expert --full-gen-key` and follow the instruction to generate a key.
 - We use Yubikey 5, so enter `4096` for  RSA key size.
 - Choose `0=key does not expire.`
@@ -55,6 +75,8 @@ Enter command: `gpg --expert --full-gen-key` and follow the instruction to gener
 - Record `key-ID` to use later in step II, such as follows:
     ![alt text](image-1.png)
     ![alt text](image-2.png)
+
+- if you lost the `key-ID`,  it is the last 16 digits of the `sec` output of `gpg --list-secret-keys`. 
 
 ### 2. Add Authenticate key:
 Add Authenticate key by following command:
@@ -70,11 +92,16 @@ Add Authenticate key by following command:
 - Save the key output to a text file and save it to a safe place.
 
 ### 4. Move the keys to Yubikey:
-- `gpg --edit-key <key-ID>` to enter the key editing mode. Follow `To import the key on your YubiKey:` section in the tutorial.
+- Follow `To import the key on your YubiKey:` section in the tutorial `https://support.yubico.com/hc/en-us/articles/360013790259-Using-Your-YubiKey-with-OpenPGP`
+- `gpg --edit-key <key-ID>` to enter the key editing mode. 
 - enter `keytocard` and follow the steps:
-- It will ask for your passphrase and admin-PIN to continue. The default admin-pin is `12345678`.
-- Choose the key type to move to Yubikey. You will need to do it 2 times, one for each key type: 1. Signing and Encryption, 3. Authentication.
+  - It will ask for your passphrase and admin-PIN to continue. The default admin-pin is `12345678`.
+  - Choose the key type to move to Yubikey. You will need to do it 2 times, one for each key type: 1. Signing and Encryption, 3. Authentication.
+- enter `quit` when finish.
+- When prompted to save your changes, enter n (no). Otherwise, GPG will delete you key from your hard drive, and you won't be able to copy it to another YubiKey/keep it as a backup/etc. See here for a more detailed explanation.
 
+### 5. Verify the key is on Yubikey:
+- `gpg --card-status` to verify the key is on Yubikey, you should see your key info in the line `General key info..:`. 
 
 ## III. Setup Wireguard Key as PIV:
 ### 1. Background
@@ -151,9 +178,9 @@ Endpoint = dc-morioka.cybercore.co.jp:51820
 PersistentKeepAlive = 30
 ```
 Note that, 
-- The PIV SLOT must match with the SLOT when you import keys to Yubikey.
-- The user `chuong` is the sudo user that will run the Wireguard command.
-- in the PostUp for preshared-key, we copy the Public key of [Peer] to the config file. 
+- The PIV SLOT must match with the SLOT when you import keys to Yubikey. In the example above, they are `5f0000` and `5f0001`.
+- The user `chuong` is the sudo user that will run the Wireguard command. Change it to your user.
+- in the PostUp for preshared-key, we copy the Public key of [Peer] to the config file. In the example above, it is `ga76P+hZ1ihKhU8YZUVN8IPRhsRBe4uKEK0KkuubX10=`.
 
 6. Stop and restart the Wireguard service:
 ```
